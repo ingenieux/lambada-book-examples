@@ -8,13 +8,19 @@
     <packaging>pom</packaging>
 
     <properties>
-        <beanstalker.version>1.4.5-SNAPSHOT</beanstalker.version>
-        <lambada.version>0.0.2-SNAPSHOT</lambada.version>
-        <maven.deploy.skip>true</maven.deploy.skip>
-        <maven.install.skip>true</maven.install.skip>
+        <!-- Disabling Warnings -->
+        <beanstalk.s3Bucket/>
+        <beanstalk.versionLabel/>
 
         <beanstalk.s3Key>apps/${project.artifactId}/${project.artifactId}-${beanstalk.versionLabel}.zip</beanstalk.s3Key>
         <beanstalk.artifactFile>${project.basedir}/target/${project.artifactId}.jar</beanstalk.artifactFile>
+
+        <beanstalker.version>1.4.5-SNAPSHOT</beanstalker.version>
+        <lambada.version>0.0.2-SNAPSHOT</lambada.version>
+
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+
     </properties>
 
     <modules>
