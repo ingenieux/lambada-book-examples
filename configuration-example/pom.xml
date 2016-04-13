@@ -4,7 +4,6 @@
         xmlns="http://maven.apache.org/POM/4.0.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>io.ingenieux.lambada</groupId>
         <artifactId>lambada-book-examples</artifactId>
@@ -12,28 +11,25 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>lambda-shell</artifactId>
+    <artifactId>configuration-example</artifactId>
+
+    <properties>
+        <foo>bar</foo>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.outputDirectory}</targetPath>
+            </resource>
+        </resources>
+    </build>
 
     <dependencies>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.ingenieux.lambada</groupId>
             <artifactId>lambada-runtime</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-core</artifactId>
         </dependency>
     </dependencies>
 </project>

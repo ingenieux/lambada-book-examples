@@ -6,10 +6,21 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.ingenieux.lambada</groupId>
-        <artifactId>lambada-examples-parent</artifactId>
+        <artifactId>lambada-book-examples</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>sns-example</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.ingenieux.lambada</groupId>
+            <artifactId>lambada-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-events</artifactId>
+        </dependency>
+    </dependencies>
 </project>
