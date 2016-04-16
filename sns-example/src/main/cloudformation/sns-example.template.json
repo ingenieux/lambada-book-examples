@@ -1,0 +1,41 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Sample Resources for the lambada-book-examples project",
+
+  "Resources": {
+    "ExampleSNSTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "TopicName": "sns-example-topic",
+        "DisplayName": "SNS Example Topic"
+      }
+    },
+    "IAMLambdaBasicRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{ "Effect": "Allow", "Principal": {"Service": ["lambda.amazonaws.com"]}, "Action": ["sts:AssumeRole"] }]
+        },
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "root",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              { "Effect": "Allow", "Action": [ "logs:*" ], "Resource": "arn:aws:logs:*:*:*" }
+            ]
+          }
+        }]
+      }
+    }
+  },
+
+  "Outputs": {
+    "IAMRole": {
+      "Description": "IAM Lambda Basic Execution Role",
+      "Value": { "Fn::GetAtt": [ "IAMLambdaBasicRole", "Arn" ] }
+    }
+  }
+}

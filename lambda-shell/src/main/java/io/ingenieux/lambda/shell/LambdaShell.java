@@ -34,7 +34,7 @@ public class LambdaShell {
         System.err.println(result);
     }
 
-    @LambadaFunction(name="lb_runCommand", memorySize = 512, timeout = 300, role="*/lambda_s3_full")
+    @LambadaFunction(name="lb_runCommand", memorySize = 512, timeout = 300)
     public Map<String, List<String>> runCommands(List<String> inCommands) throws Exception {
         Map<String, List<String>> result = new LinkedHashMap<>();
 

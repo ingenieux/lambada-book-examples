@@ -120,6 +120,11 @@
                     <artifactId>lambada-maven-plugin</artifactId>
                     <version>${lambada.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>br.com.ingenieux</groupId>
+                    <artifactId>cloudformation-maven-plugin</artifactId>
+                    <version>${beanstalker.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -139,6 +144,10 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>br.com.ingenieux</groupId>
+                <artifactId>cloudformation-maven-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -154,6 +163,24 @@
             <build>
                 <defaultGoal>deploy</defaultGoal>
                 <plugins>
+                    <plugin>
+                        <groupId>br.com.ingenieux</groupId>
+                        <artifactId>cloudformation-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>load-stack-outputs</goal>
+                                </goals>
+                                <configuration>
+                                    <outputMapping>
+                                        <IAMRole>lambda.default.role</IAMRole>
+                                    </outputMapping>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                    </plugin>
                     <plugin>
                         <artifactId>maven-shade-plugin</artifactId>
                         <version>2.3</version>
