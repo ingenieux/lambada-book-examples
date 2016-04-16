@@ -1,0 +1,262 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Sample Resources for the lambada-book-examples project",
+
+  "Parameters" : {
+    "EC2KeyName": {
+      "Type" : "String",
+      "Description": "EC2 Key to Use"
+    }
+  },
+
+  "Resources": {
+    "IAMLambdaBasicS3Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{ "Effect": "Allow", "Principal": {"Service": ["lambda.amazonaws.com"]}, "Action": ["sts:AssumeRole"] }]
+        },
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "root",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              { "Effect": "Allow", "Action": [ "logs:*" ], "Resource": "arn:aws:logs:*:*:*" },
+              { "Effect": "Allow", "Action": [ "s3:*" ], "Resource": "*" },
+              { "Effect": "Allow", "Action": [ "ec2:*NetworkInterface*" ], "Resource": "*" }
+            ]
+          }
+        }]
+      }
+    },
+    "VPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsSupport": true,
+        "EnableDnsHostnames": true
+      }
+    },
+    "Subnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "CidrBlock": "10.0.0.0/24",
+        "MapPublicIpOnLaunch": true
+      }
+    },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+      }
+    },
+    "AttachGateway": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "InternetGateway"
+        }
+      }
+    },
+    "RouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        }
+      }
+    },
+    "Route": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "AttachGateway",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "RouteTable"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "InternetGateway"
+        }
+      }
+    },
+    "SubnetRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "Subnet"
+        },
+        "RouteTableId": {
+          "Ref": "RouteTable"
+        }
+      }
+    },
+    "NetworkAcl": {
+      "Type": "AWS::EC2::NetworkAcl",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        }
+      }
+    },
+    "InboundSSHNetworkAclEntry": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        },
+        "RuleNumber": "101",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "Egress": "false",
+        "CidrBlock": "0.0.0.0/0",
+        "PortRange": {
+          "From": "22",
+          "To": "22"
+        }
+      }
+    },
+    "InboundResponsePortsNetworkAclEntry": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        },
+        "RuleNumber": "102",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "Egress": "false",
+        "CidrBlock": "0.0.0.0/0",
+        "PortRange": {
+          "From": "0",
+          "To": "65535"
+        }
+      }
+    },
+    "OutBoundResponsePortsNetworkAclEntry": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        },
+        "RuleNumber": "102",
+        "Protocol": "6",
+        "RuleAction": "allow",
+        "Egress": "true",
+        "CidrBlock": "0.0.0.0/0",
+        "PortRange": {
+          "From": "0",
+          "To": "65535"
+        }
+      }
+    },
+    "SubnetNetworkAclAssociation": {
+      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "Subnet"
+        },
+        "NetworkAclId": {
+          "Ref": "NetworkAcl"
+        }
+      }
+    },
+    "InstanceSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "GroupDescription": "Enable SSH access via port 22",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "SelfSecurityGroupIngress": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": { "Ref": "InstanceSecurityGroup" },
+        "IpProtocol": "tcp",
+        "FromPort": "0",
+        "ToPort": "65535",
+        "SourceSecurityGroupId": { "Ref": "InstanceSecurityGroup" }
+      },
+      "DependsOn": [ "InstanceSecurityGroup"]
+    },
+    "CoreOSInstance": {
+      "Type": "AWS::EC2::Instance",
+      "DependsOn": [ "InstanceSecurityGroup" ],
+      "Properties": {
+        "ImageId": "ami-7a627510",
+        "SecurityGroupIds": [
+          {
+            "Ref": "InstanceSecurityGroup"
+          }
+        ],
+        "SubnetId": {
+          "Ref": "Subnet"
+        },
+        "InstanceType": "m3.medium",
+        "KeyName": {
+          "Ref": "EC2KeyName"
+        },
+        "Tags": [
+          { "Key": "Name",
+            "Value": "CoreOS Instance"
+          }
+        ],
+        "UserData": { "Fn::Base64": {
+          "Fn::Join": [ "", [
+            "#cloud-config\n\n",
+            "coreos:\n",
+            "  etcd2:\n",
+            "    listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001\n",
+            "    advertise-client-urls: http://$private_ipv4:2379,http://$private_ipv4:4001\n",
+            "  units:\n",
+            "    - name: etcd2.service\n",
+            "      command: start\n"
+          ]]
+        }}
+      }
+    }
+  },
+
+ "Outputs": {
+    "IAMRole": {
+      "Description": "IAM Lambda Basic Execution Role",
+      "Value": { "Fn::GetAtt": [ "IAMLambdaBasicS3Role", "Arn" ] }
+    },
+    "SubnetId": {
+      "Description": "Output Subnet Id",
+      "Value": {
+        "Ref": "Subnet"
+      }
+    },
+    "SecurityGroupId": {
+      "Description": "Output Security Group Id",
+      "Value": {
+        "Ref": "InstanceSecurityGroup"
+      }
+    },
+    "CoreOSIPAddress": {
+      "Description": "Core OS Instance Public IP Address",
+      "Value": {
+        "Fn::GetAtt": [
+          "CoreOSInstance", "PrivateIp"
+        ]
+      }
+    }
+  }
+}

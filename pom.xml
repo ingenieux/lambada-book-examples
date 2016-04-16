@@ -93,6 +93,26 @@
                 <artifactId>okhttp</artifactId>
                 <version>3.2.0</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.7.0</version>
+            </dependency>
+            <dependency>
+                <groupId>net.floatingsun</groupId>
+                <artifactId>jetcd</artifactId>
+                <version>0.3.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -122,6 +142,11 @@
                 </plugin>
                 <plugin>
                     <groupId>br.com.ingenieux</groupId>
+                    <artifactId>lambda-maven-plugin</artifactId>
+                    <version>${beanstalker.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>br.com.ingenieux</groupId>
                     <artifactId>cloudformation-maven-plugin</artifactId>
                     <version>${beanstalker.version}</version>
                 </plugin>
@@ -147,6 +172,13 @@
             <plugin>
                 <groupId>br.com.ingenieux</groupId>
                 <artifactId>cloudformation-maven-plugin</artifactId>
+                <configuration>
+                    <outputMapping>
+                        <IAMRole>lambda.default.role</IAMRole>
+                        <SecurityGroupId>lambda.deploy.securityGroupIds</SecurityGroupId>
+                        <SubnetId>lambda.deploy.subnetIds</SubnetId>
+                    </outputMapping>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -172,11 +204,6 @@
                                 <goals>
                                     <goal>load-stack-outputs</goal>
                                 </goals>
-                                <configuration>
-                                    <outputMapping>
-                                        <IAMRole>lambda.default.role</IAMRole>
-                                    </outputMapping>
-                                </configuration>
                             </execution>
                         </executions>
 

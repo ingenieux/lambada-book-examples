@@ -15,6 +15,7 @@
 
     <properties>
         <foo>bar</foo>
+        <cloudformation.stack.CoreOSIPAddress>127.0.0.1</cloudformation.stack.CoreOSIPAddress>
     </properties>
 
     <build>
@@ -22,6 +23,7 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <targetPath>${project.build.outputDirectory}</targetPath>
+                <filtering>true</filtering>
             </resource>
         </resources>
     </build>
@@ -30,6 +32,14 @@
         <dependency>
             <groupId>io.ingenieux.lambada</groupId>
             <artifactId>lambada-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.floatingsun</groupId>
+            <artifactId>jetcd</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
         </dependency>
     </dependencies>
 </project>
