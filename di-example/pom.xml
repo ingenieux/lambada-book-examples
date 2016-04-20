@@ -28,12 +28,44 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>sns-example</artifactId>
+    <artifactId>di-example</artifactId>
+
+    <properties>
+        <foo>bar</foo>
+        <cloudformation.stack.CoreOSIPAddress>127.0.0.1</cloudformation.stack.CoreOSIPAddress>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.outputDirectory}</targetPath>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 
     <dependencies>
         <dependency>
             <groupId>io.ingenieux.lambada</groupId>
             <artifactId>lambada-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <classifier>no_aop</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>

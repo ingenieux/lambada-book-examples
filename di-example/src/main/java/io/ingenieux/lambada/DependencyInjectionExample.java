@@ -19,11 +19,26 @@ package io.ingenieux.lambada;
 
 import com.amazonaws.services.lambda.runtime.events.SNSEvent;
 
-import io.ingenieux.lambada.runtime.LambadaFunction;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
-public class SNSEventHandler {
-  @LambadaFunction(name="lb_handleSns", alias="lb_handleSns_latest", description="Handle SNS Events")
-  public void handleSNSEvent(SNSEvent snsEvent) throws Exception {
-    System.out.println("snsEvent: " + snsEvent);
-  }
+import io.ingenieux.lambada.runtime.LambadaFunction;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+public class DependencyInjectionExample {
+
+    @LambadaFunction(
+            name="lb_snsToPushover",
+            timeout=30
+    )
+    public void sendToPushover(SNSEvent event) throws Exception {
+        event.getRecords().stream().forEach(snsRecord -> {
+            SNSEvent.SNS sns = snsRecord.getSNS();
+        });
+    }
 }
