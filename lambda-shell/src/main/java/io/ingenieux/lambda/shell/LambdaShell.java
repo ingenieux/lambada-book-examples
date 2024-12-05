@@ -21,6 +21,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import java.nio.file.Files;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -101,7 +102,7 @@ public class LambdaShell {
     private static void runCommandArray(OutputStream os, String... args) throws Exception {
         PrintWriter pw = new PrintWriter(os, true);
 
-        File tempPath = File.createTempFile("tmp-", ".sh");
+        File tempPath = Files.createTempFile("tmp-", ".sh").toFile();
 
         IOUtils.write(StringUtils.join(args, " "), new FileOutputStream(tempPath));
 
